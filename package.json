@@ -14,11 +14,8 @@
     "@react-three/drei": "^10.7.6",
     "@react-three/fiber": "^9.4.0",
     "@react-three/postprocessing": "^3.0.4",
-<<<<<<< HEAD
     "@reduxjs/toolkit": "^2.11.2",
-=======
     "@remixicon/react": "^4.8.0",
->>>>>>> 35ce7dd92e6590f0c40954bb71f68f23f7a5cb48
     "@studio-freight/lenis": "^1.0.8",
     "@whatisjery/react-fluid-distortion": "^1.5.1",
     "class-variance-authority": "^0.7.1",
