@@ -1,3 +1,4 @@
+// src/App.jsx
 import { useEffect, useRef, useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import Lenis from "@studio-freight/lenis";
@@ -11,7 +12,8 @@ import { Fluid } from "@whatisjery/react-fluid-distortion";
 import Loader from "./Components/Loader/Loader";
 import Navbar from "./Components/UI/Navbar/Navbar";
 import FloatingNode from "./Components/UI/FloatingNode";
-import Home from "./Pages/Home";
+import HomePage from "./Pages/HomePage";
+import HubPage from "./Pages/HubPage";
 import Footer from "./Components/Footer/Footer";
 import Scene from "./Components/Scene";
 import AutomationControls from "./Pages/AutomationControls";
@@ -125,28 +127,32 @@ export default function App() {
         <Navbar navMode={navMode} />
     <FloatingNode phase={phase} />
 
-    <div className="main-container">
-      <div
-        className="scroll-container"
-        style={{ position: "relative", zIndex: 3 }}
-      >
-        <Routes>
-          <Route
-            path="/"
-            element={<Home onPhase={setPhase} setNavMode={setNavMode} />}
-          />
-          <Route
-            path="/automation-controls"
-            element={<AutomationControls setNavMode={setNavMode} />}
-          />
-          <Route
-            path="*"
-            element={<Home onPhase={setPhase} setNavMode={setNavMode} />}
-          />
-        </Routes>
-        <Footer />
-      </div>
-    </div>
+        <div className="main-container">
+          <div
+            className="scroll-container"
+            style={{ position: "relative", zIndex: 3 }}
+          >
+            <Routes>
+              <Route
+                path="/"
+                element={<HomePage onPhase={setPhase} setNavMode={setNavMode} />}
+              />
+              <Route
+                path="/hub"
+                element={<HubPage onPhase={setPhase} setNavMode={setNavMode} />}
+              />
+              <Route
+                path="/automation-controls"
+                element={<AutomationControls setNavMode={setNavMode} />}
+              />
+              <Route
+                path="*"
+                element={<HomePage onPhase={setPhase} setNavMode={setNavMode} />}
+              />
+            </Routes>
+            <Footer />
+          </div>
+        </div>
       </Transition>
 
       <Molecule />
