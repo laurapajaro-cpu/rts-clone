@@ -16,6 +16,7 @@ import Footer from "./Components/Footer/Footer";
 import Scene from "./Components/Scene";
 import AutomationControls from "./Pages/AutomationControls";
 import Transition from "./Components/Transition/Transition";
+import Molecule from './Components/molecule/Molecule'
 
 import "./App.css";
 import "./index.css";
@@ -122,31 +123,33 @@ export default function App() {
 
       <Transition ref={transitionRef} enabled={loaderDone} lenisRef={lenisRef}>
         <Navbar navMode={navMode} />
-        <FloatingNode phase={phase} />
+    <FloatingNode phase={phase} />
 
-        <div className="main-container">
-          <div
-            className="scroll-container"
-            style={{ position: "relative", zIndex: 3 }}
-          >
-            <Routes>
-              <Route
-                path="/"
-                element={<Home onPhase={setPhase} setNavMode={setNavMode} />}
-              />
-              <Route
-                path="/automation-controls"
-                element={<AutomationControls setNavMode={setNavMode} />}
-              />
-              <Route
-                path="*"
-                element={<Home onPhase={setPhase} setNavMode={setNavMode} />}
-              />
-            </Routes>
-            <Footer />
-          </div>
-        </div>
+    <div className="main-container">
+      <div
+        className="scroll-container"
+        style={{ position: "relative", zIndex: 3 }}
+      >
+        <Routes>
+          <Route
+            path="/"
+            element={<Home onPhase={setPhase} setNavMode={setNavMode} />}
+          />
+          <Route
+            path="/automation-controls"
+            element={<AutomationControls setNavMode={setNavMode} />}
+          />
+          <Route
+            path="*"
+            element={<Home onPhase={setPhase} setNavMode={setNavMode} />}
+          />
+        </Routes>
+        <Footer />
+      </div>
+    </div>
       </Transition>
+
+      <Molecule />
     </>
   );
 }

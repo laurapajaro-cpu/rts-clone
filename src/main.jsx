@@ -1,6 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
+import { Provider } from 'react-redux'
+import { store } from './store'
 
 import App from "./App.jsx";
 import "./index.css";
@@ -12,8 +14,10 @@ const BASENAME = import.meta.env.BASE_URL.replace(/\/$/, "");
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <BrowserRouter basename={BASENAME}>
-      <App />
-    </BrowserRouter>
+    <Provider store={store}>
+      <BrowserRouter basename={BASENAME}>
+        <App />
+      </BrowserRouter>
+    </Provider>
   </React.StrictMode>
 );
