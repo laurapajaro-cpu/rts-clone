@@ -108,7 +108,7 @@ function Molecule() {
             left: 0,
             width: '100vw',
             height: '100vh',
-            zIndex: 10,
+            zIndex: 1,
             pointerEvents: 'none',
         }}>
             <Canvas orthographic camera={{ zoom: 100, position: [0, 0, 1] }}>

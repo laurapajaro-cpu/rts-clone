@@ -67,7 +67,7 @@ const Transition = forwardRef(({ children, enabled, lenisRef }, ref) => {
 
   return (
     <TransitionContext.Provider value={{ go }}>
-      <div className="transition-wrapper" style={{ position: 'relative' }}>
+      <div className="transition-wrapper" style={{ position: 'relative', zIndex: 2 }}>
         {children}
         <div
           ref={curtainRef}

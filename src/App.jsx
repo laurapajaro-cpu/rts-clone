@@ -123,14 +123,16 @@ export default function App() {
         <Loader isReady={isReady} onDone={() => setLoaderDone(true)} />
       )}
 
+      <Molecule />
+
       <Transition ref={transitionRef} enabled={loaderDone} lenisRef={lenisRef}>
         <Navbar navMode={navMode} />
     <FloatingNode phase={phase} />
 
-        <div className="main-container">
+        <div className="main-container" style={{ background: "transparent" }}>
           <div
             className="scroll-container"
-            style={{ position: "relative", zIndex: 3 }}
+            style={{ position: "relative", zIndex: 3, background: "transparent" }}
           >
             <Routes>
               <Route
@@ -154,8 +156,6 @@ export default function App() {
           </div>
         </div>
       </Transition>
-
-      <Molecule />
     </>
   );
 }
