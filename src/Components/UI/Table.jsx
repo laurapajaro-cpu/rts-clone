@@ -1,58 +1,100 @@
-import "./Table.css";
-
+import { Typography, Button } from "../index";
+import {cn} from '../../lib/utils'
 export default function Table({
-  title = "Capabilities with Honeywell technologies",
+  title = "",
   columns = ["Service", "Focus", "Description", "Main technologies"],
   rows = [],
+  mode = 'dark'
 }) {
   return (
-    <section className="tableBlock">
-      <h2 className="tableBlock__title title-large">{title}</h2>
-
-      <div className="tableBlock__frame">
-        {/* Header */}
-        <div className="tableBlock__head">
+    <section className="w-full h-full">
+      {/* VERSION DESKTOP - Table */}
+      <div className=" flex-col gap-5 h-full hidden md:flex scroll-horizontal-allowed">
+        {/* Header sticky - Siempre visible al scrollear */}
+        <div className={`sticky top-[100px] z-10 rounded-md bg-background-primary p-3 gap-4 grid grid-cols-4`}>
           {columns.map((c, i) => (
-            <div key={c + i} className="tableBlock__headCell subtitle-md">
-              {c}
-            </div>
+            <Typography
+              key={c + i}
+              children={c}
+              variant="subtitle-lg"
+              className="text-text-primary"
+            />
           ))}
         </div>
 
-        {/* Rows */}
-        <div className="tableBlock__body">
-          {rows.map((row, idx) => (
-            <div key={idx} className="tableBlock__row">
-              {/* Col 1 */}
-              <div className="tableBlock__cell tableBlock__cell--c1 title-small">
-                {row.c1}
+        {/* Rows - Contenedor con scroll */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="flex flex-col gap-4 pb-4">
+            {rows.map((r, rowIndex) => (
+              <div
+                key={rowIndex}
+                className={`rounded-md p-3 gap-4 grid grid-cols-4  md:grid`}
+              >
+                {r.map((c, colIndex) => (
+                  <div key={`${rowIndex}-${colIndex}`} className="flex">
+                    {Array.isArray(c.children) ? (
+                      <ul className="flex flex-col list-disc pl-4">
+                        {c.children.map((item, itemIndex) => (
+                          <li key={`${rowIndex}-${colIndex}-${itemIndex}`}>
+                            <Typography
+                              children={` ${item}`}
+                              variant={c.variant}
+                            />
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <Typography
+                        children={c.children}
+                        variant={c.variant}
+                        className="whitespace-pre-line"
+                      />
+                    )}
+                  </div>
+                ))}
               </div>
-
-              {/* Col 2 */}
-              <div className="tableBlock__cell tableBlock__cell--c2 title-body">
-                {row.c2}
-              </div>
-
-              {/* Col 3 */}
-              <div className="tableBlock__cell tableBlock__cell--c3 body-small">
-                {row.c3}
-              </div>
-
-              {/* Col 4 (texto o lista) */}
-              <div className="tableBlock__cell tableBlock__cell--c4 body-small">
-                {Array.isArray(row.c4) ? (
-                  <ul className="tableBlock__bullets">
-                    {row.c4.map((t, i) => (
-                      <li key={t + i}>{t}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  row.c4
-                )}
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
+      </div>
+
+      {/* VERSION MOBILE - Cards */}
+      <div className="flex flex-col gap-5 h-full md:hidden">
+        {rows.map((r, rowIndex) => (
+          <div
+            key={rowIndex}
+            className="relative flex flex-col gap-4 rounded-md p-[0.8px]"
+            style={{
+              backgroundImage: 'linear-gradient(90deg, #7513FF, #4348F3, #0093CE)'
+            }}
+          >
+            {/* Fondo interior */}
+            <div className="rounded-md bg-background-inverse-hover py-6 px-3">
+              {r.map((c, colIndex) => (
+                <div key={`${rowIndex}-${colIndex}`} className="flex">
+                  {Array.isArray(c.children) ? (
+                    <ul className="flex flex-col list-disc pl-4">
+                      {c.children.map((item, itemIndex) => (
+                        <li key={`${rowIndex}-${colIndex}-${itemIndex}`}>
+                          <Typography
+                            children={` ${item}`}
+                            variant={c.variant}
+                          />
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <Typography
+                      children={c.children}
+                      variant={c.variant}
+                      className="whitespace-pre-line"
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     </section>
   );

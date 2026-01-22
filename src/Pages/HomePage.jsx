@@ -1,6 +1,5 @@
 import { useRef, useEffect } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useTheme } from "../contexts/ThemeContext";
 
 import HeroHomePage from "../Components/Hero/HeroHomePage/HeroHomePage";
 import HorizontalCarousel from "../Components/Carousel/HorizontalCarousel";
@@ -12,82 +11,56 @@ import Location from "../Components/Location/Location";
 
 import bannerImg from "../assets/Banner.jpeg";
 
-gsap.registerPlugin(ScrollTrigger);
-
-export default function HomePage({ onPhase, setNavMode }) {
+export default function HomePage({ onPhase }) {
   const whiteBlockRef = useRef(null);
+  const { setTheme } = useTheme();
 
-  useEffect(() => {
-    const whiteBlock = whiteBlockRef.current;
-    const root = document.documentElement; // :root
+useEffect(() => {
+    if (!whiteBlockRef.current) {
+      console.log('⚠️ whiteBlockRef.current aún no existe');
+      return;
+    }
 
-    const st = ScrollTrigger.create({
-      trigger: whiteBlock,
-      start: "top center",
-      end: "bottom center",
-      scrub: false,
+    // console.log('🎯 Observando elemento:', whiteBlockRef.current);
+    // console.log('🎯 Altura del elemento:', whiteBlockRef.current.offsetHeight);
+    // console.log('🎯 Posición top:', whiteBlockRef.current.offsetTop);
 
-      onEnter: () => {
-        gsap.to(root, {
-          "--color-bg": "var(--color-bg-light)",   // #ffffff
-          "--color-text": "var(--color-text-light)", // #000000
-          duration: 0.4,
-          ease: "none",
-        });
-
-        gsap.delayedCall(0.25, () => {
-          setNavMode("light");
-          window.dispatchEvent(new Event("navLight"));
-        });
-      },
-
-      onEnterBack: () => {
-        gsap.to(root, {
-          "--color-bg": "var(--color-bg-light)",
-          "--color-text": "var(--color-text-light)",
-          duration: 0.4,
-          ease: "none",
-        });
-
-        gsap.delayedCall(0.25, () => {
-          setNavMode("light");
-          window.dispatchEvent(new Event("navLight"));
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          //console.log('🔍 IntersectionObserver entry:', {
+          //   isIntersecting: entry.isIntersecting,
+          //   intersectionRatio: entry.intersectionRatio,
+          //   boundingClientRect: entry.boundingClientRect,
+          //   rootBounds: entry.rootBounds,
+          //   time: entry.time
+          // });
+          
+          if (entry.isIntersecting) {
+            //console.log('✅ EN VISTA - Cambiando a light');
+            setTheme("light");
+            window.dispatchEvent(new Event("navLight"));
+          } else {
+            //console.log('❌ FUERA DE VISTA - Cambiando a dark');
+            setTheme("dark");
+            window.dispatchEvent(new Event("navDark"));
+          }
         });
       },
+      {
+        threshold: 0.1, // Baja a 10% para más sensibilidad
+        rootMargin: "0px", // Quita los márgenes negativos para empezar
+      }
+    );
 
-      onLeave: () => {
-        gsap.to(root, {
-          "--color-bg": "#000000",
-          "--color-text": "#ffffff",
-          duration: 0.4,
-          ease: "none",
-        });
-
-        gsap.delayedCall(0.25, () => {
-          setNavMode("dark");
-          window.dispatchEvent(new Event("navDark"));
-        });
-      },
-
-      onLeaveBack: () => {
-        gsap.to(root, {
-          "--color-bg": "#000000",
-          "--color-text": "#ffffff",
-          duration: 0.4,
-          ease: "none",
-        });
-
-        gsap.delayedCall(0.25, () => {
-          setNavMode("dark");
-          window.dispatchEvent(new Event("navDark"));
-        });
-      },
-    });
+    observer.observe(whiteBlockRef.current);
 
     return () => {
-      st.kill();
+      console.log('🧹 Limpiando observer');
+      observer.disconnect();
     };
-  }, [setNavMode]);
+  }, [setTheme]);
+
 
   return (
     <>
@@ -98,29 +71,28 @@ export default function HomePage({ onPhase, setNavMode }) {
       <Marquee />
 
       <div ref={whiteBlockRef}>
-        <Story setNavMode={setNavMode} />
+        <Story />
         <Hub />
         <Location/>
       </div>
 
-     <Banner
+      <Banner
         variant="image"
         backgroundImage={bannerImg}
         titleClassName="display-medium"
         titleDesktop={"LET'S SPARK YOUR\nINDUSTRIAL BRILLIANCE"}
         titleMobile={"LET'S SPARK\nYOUR INDUSTRIAL\nBRILLIANCE"}
         bodyDesktop={
-          "Every challenge is an opportunity. Share yours, and\nlet’s explore how to bring your vision to life."
+          "Every challenge is an opportunity. Share yours, and\nlet's explore how to bring your vision to life."
         }
         bodyMobile={
-          "Every challenge is an opportunity.\nShare yours, and let’s explore how to\nbring your vision to life."
+          "Every challenge is an opportunity.\nShare yours, and let's explore how to\nbring your vision to life."
         }
         buttons={[
           { label: "Book a meeting now", href: "#book", variant: "primary" },
         ]}
         start="top top"
       />
-
     </>
   );
 }

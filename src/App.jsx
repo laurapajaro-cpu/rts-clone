@@ -9,6 +9,7 @@ import { Canvas } from "@react-three/fiber";
 import { EffectComposer, Noise, Vignette, Bloom } from "@react-three/postprocessing";
 import { Fluid } from "@whatisjery/react-fluid-distortion";
 
+import { useTheme } from "./contexts/ThemeContext";
 import Loader from "./Components/Loader/Loader";
 import Navbar from "./Components/UI/Navbar/Navbar";
 import FloatingNode from "./Components/UI/FloatingNode";
@@ -16,7 +17,7 @@ import HomePage from "./Pages/HomePage";
 import HubPage from "./Pages/HubPage";
 import Footer from "./Components/Footer/Footer";
 import Scene from "./Components/Scene";
-import AutomationControls from "./Pages/AutomationControls";
+import AutomationControlsPage from "./Pages/AutomationControlsPage";
 import Transition from "./Components/Transition/Transition";
 import Molecule from './Components/molecule/Molecule'
 
@@ -26,12 +27,13 @@ import "./index.css";
 gsap.registerPlugin(ScrollTrigger);
 
 export default function App() {
+  // const { theme } = useTheme();
+  // console.log('App theme', theme);
   const location = useLocation();
-  const transitionRef = useRef(null); // Referencia vital para la transición
-
+  const transitionRef = useRef(null);
+  
   const [scroll, setScroll] = useState(0);
   const [phase, setPhase] = useState(0);
-  const [navMode, setNavMode] = useState("dark");
 
   const [isReady, setIsReady] = useState(false);
   const [loaderDone, setLoaderDone] = useState(false);
@@ -104,18 +106,8 @@ export default function App() {
     window.dispatchEvent(new Event("hero:enter"));
   }, [loaderDone]);
 
-  useEffect(() => {
-    if (!loaderDone) return;
-    const isHome = location.pathname === "/";
-    if (!isHome) {
-      setNavMode("dark");
-      document.documentElement.style.backgroundColor = "#000102";
-      document.body.style.backgroundColor = "#000102";
-    } else {
-      document.documentElement.style.backgroundColor = "";
-      document.body.style.backgroundColor = "";
-    }
-  }, [location.pathname, loaderDone]);
+  // Eliminamos el useEffect que manejaba el background
+  // porque ahora lo maneja el ThemeContext
 
   return (
     <>
@@ -126,8 +118,8 @@ export default function App() {
       <Molecule />
 
       <Transition ref={transitionRef} enabled={loaderDone} lenisRef={lenisRef}>
-        <Navbar navMode={navMode} />
-    <FloatingNode phase={phase} />
+        <Navbar />
+        <FloatingNode phase={phase} />
 
         <div className="main-container" style={{ background: "transparent" }}>
           <div
@@ -137,19 +129,19 @@ export default function App() {
             <Routes>
               <Route
                 path="/"
-                element={<HomePage onPhase={setPhase} setNavMode={setNavMode} />}
+                element={<HomePage onPhase={setPhase} />}
               />
               <Route
                 path="/hub"
-                element={<HubPage onPhase={setPhase} setNavMode={setNavMode} />}
+                element={<HubPage onPhase={setPhase}  />}
               />
               <Route
                 path="/automation-controls"
-                element={<AutomationControls setNavMode={setNavMode} />}
+                element={<AutomationControlsPage  />}
               />
               <Route
                 path="*"
-                element={<HomePage onPhase={setPhase} setNavMode={setNavMode} />}
+                element={<HomePage onPhase={setPhase} />}
               />
             </Routes>
             <Footer />

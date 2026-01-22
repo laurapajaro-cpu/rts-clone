@@ -23,7 +23,7 @@ export default function BelowTheLineSection() {
             if (!section || !container) return;
 
             // Configuración similar al carrusel
-            const PIN_START_OFFSET_VH = -0.2;
+            const PIN_START_OFFSET_VH = +0;
             const PIN_BUFFER = window.innerHeight * 0.3;
 
             const getTotalWidth = () => {
@@ -78,9 +78,9 @@ export default function BelowTheLineSection() {
     return (
         <section
             ref={sectionRef}
-            className="relative w-full min-h-[120vh] py-20 overflow-hidden"
+            className="relative w-full h-[120vh]  overflow-hidden"
         >
-            <div className="container mx-auto px-4">
+            <div className="container  md:px-7 px-3 my-9">
                 <div className="flex flex-col gap-12">
                     <div className="flex flex-col gap-3">
                         <Typography variant="subtitle-large">- 01</Typography>

@@ -2,10 +2,9 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import "./Story.css";
-
 gsap.registerPlugin(ScrollTrigger);
 
-export default function Story({ setNavMode }) {
+export default function Story() {
   const rootRef = useRef(null);
 
   useEffect(() => {
@@ -46,7 +45,6 @@ export default function Story({ setNavMode }) {
             ease: "power2.out",
             overwrite: "auto",
           });
-          setNavMode?.("light");
         },
         onLeaveBack: () => {
           gsap.to(root, {
@@ -55,7 +53,6 @@ export default function Story({ setNavMode }) {
             ease: "power2.out",
             overwrite: "auto",
           });
-          setNavMode?.("dark");
         },
       });
 
@@ -98,7 +95,7 @@ export default function Story({ setNavMode }) {
     }, rootRef);
 
     return () => ctx.revert();
-  }, [setNavMode]);
+  }, []);
 
   return (
     <section className="story-section" ref={rootRef}>

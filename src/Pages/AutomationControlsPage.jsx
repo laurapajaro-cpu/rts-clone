@@ -2,15 +2,13 @@
 // src/Pages/AutomationControls.jsx
 
 import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
+import { Typography, Button } from "../Components/index";
 import ApproachButton from "../Components/UI/ApproachButton";
 import Accordeon from "../Components/UI/Accordeon";
 import BannerText from "../Components/BannerText/BannerText";
 import Table from "../Components/UI/Table";
 import Banner from "../Components/Banner/Banner";
-
+import { useTheme } from "../contexts/ThemeContext";
 import bannerOne from "../assets/A&C1.png";
 import bannerTwo from "../assets/A&C.png";
 import bannerImg from "../assets/Content.png";
@@ -21,7 +19,6 @@ import integrationsImg from "../assets/integrations.png";
 
 import "./AutomationControls.css";
 
-gsap.registerPlugin(ScrollTrigger);
 
 const items = [
   {
@@ -51,35 +48,38 @@ const items = [
 ];
 
 const tableRows = [
-  {
-    c1: "Experion Architecture\n& Control System",
-    c2: "We provide expert guidance to help clients select, design, and ",
-    c3: "From system design to logic configuration and safety integration, RTS engineers ensure seamless performance across PKS, TPS, and ControlEdge environments.",
-    c4: ["Experion PKS", "TPS", "Control Edge", "Safety Manager"],
-  },
-  {
-    c1: "System Migration\n& Virtualization",
-    c2: "We modernize legacy Honeywell systems without losing their DNA.",
-    c3: "RTS specializes in migration from TPS to PKS, virtualization of legacy nodes, and upgrade projects across all HPS layers — preserving knowledge while unlocking new performance.",
-    c4: ["TPS migration", "Virtualization", "Experion upgrade", "Backup recovery"],
-  },
-  {
-    c1: "Data Integration\n& Operational Intelligence",
-    c2: "We extend the value of Honeywell Process Solutions into the digital layer.",
-    c3: "Integrating Experion with PI System, Edge gateways, and cloud analytics, RTS connects process control to enterprise intelligence — making operations measurable, visible, and adaptive.",
-    c4: [
-      "Experion-to-PI integration",
-      "Honeywell Digital Twin",
-      "Edge/Historian",
-      "Secure Remote Access",
-    ],
-  },
-  {
-    c1: "SCADA, Visualization\n& Field Implementation",
-    c2: "We bring HPS technology to life in the field.",
-    c3: "From SCADA configuration to commissioning and validation (FAT/SAT), RTS delivers end-to-end implementation aligned with Honeywell engineering standards and methodologies.",
-    c4: ["Experion SCADA", "Honeywell RTU2020", "HC900", "Experion HS"],
-  },
+  [
+    { children: "Experion Architecture\n& Control System", variant: "title-small" },
+    { children: "We provide expert guidance to help clients select, design, and ", variant: "title-body" },
+    { children: "From system design to logic configuration and safety integration, RTS engineers ensure seamless performance across PKS, TPS, and ControlEdge environments.", variant: "body-sm" },
+
+    { children: ["Experion PKS", "TPS", "Control Edge", "Safety Manager"], variant: "body-sm" },
+  ],
+  [
+    { children: "System Migration\n& Virtualization", variant: "title-small" },
+    { children: "We modernize legacy Honeywell systems without losing their DNA.", variant: "title-body" },
+    { children: "RTS specializes in migration from TPS to PKS, virtualization of legacy nodes, and upgrade projects across all HPS layers — preserving knowledge while unlocking new performance.", variant: "body-sm" },
+    { children: ["TPS migration", "Virtualization", "Experion upgrade", "Backup recovery"], variant: "body-sm" },
+  ],
+  [
+    { children: "Data Integration\n& Operational Intelligence", variant: "title-small" },
+    { children: "We extend the value of Honeywell Process Solutions into the digital layer.", variant: "title-body" },
+    { children: "Integrating Experion with PI System, Edge gateways, and cloud analytics, RTS connects process control to enterprise intelligence — making operations measurable, visible, and adaptive.", variant: "body-sm" },
+    {
+      children: [
+        "Experion-to-PI integration",
+        "Honeywell Digital Twin",
+        "Edge/Historian",
+        "Secure Remote Access",
+      ], variant: "body-sm"
+    },
+  ],
+  [
+    { children: "SCADA, Visualization\n& Field Implementation", variant: "title-small" },
+    { children: "We bring HPS technology to life in the field.", variant: "title-body" },
+    { children: "From SCADA configuration to commissioning and validation (FAT/SAT), RTS delivers end-to-end implementation aligned with Honeywell engineering standards and methodologies.", variant: "body-sm" },
+    { children: ["Experion SCADA", "Honeywell RTU2020", "HC900", "Experion HS"], variant: "body-sm" },
+  ],
 ];
 
 const engineeringCards = [
@@ -103,47 +103,52 @@ const engineeringCards = [
   },
 ];
 
-export default function AutomationControls({ setNavMode }) {
+export default function AutomationControlsPage({ setNavMode }) {
 
-  const whiteZoneRef = useRef(null);
+  const whiteBlockRef = useRef(null);
+  const { setTheme } = useTheme();
   useEffect(() => {
-    const el = whiteZoneRef.current;
-    if (!el) return;
-  
-    const st = ScrollTrigger.create({
-      trigger: el,
-  
-      // Activo EXACTO cuando el wrapper está en viewport (intersección)
-      // Si querés que cambie "1 ms antes", le doy 1px de anticipación:
-      start: "top bottom-=1",
-      end: "bottom top+=1",
-  
-      invalidateOnRefresh: true,
-      refreshPriority: 1,
-  
-      onToggle: (self) => {
-        setNavMode?.(self.isActive ? "light" : "dark");
+    if (!whiteBlockRef.current) {
+      console.log('⚠️ whiteBlockRef.current aún no existe');
+      return;
+    }
+
+   
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+         
+
+          if (entry.isIntersecting) {
+            //console.log('✅ EN VISTA - Cambiando a light');
+            setTheme("light");
+            window.dispatchEvent(new Event("navLight"));
+          } else {
+           // console.log('❌ FUERA DE VISTA - Cambiando a dark');
+            setTheme("dark");
+            window.dispatchEvent(new Event("navDark"));
+          }
+        });
       },
-  
-      // Debug opcional:
-      // markers: true,
-    });
-  
-    const raf = requestAnimationFrame(() => ScrollTrigger.refresh());
-    const onLoad = () => ScrollTrigger.refresh();
-    window.addEventListener("load", onLoad);
-  
+      {
+        threshold: 0.1, // Baja a 10% para más sensibilidad
+        rootMargin: "0px", // Quita los márgenes negativos para empezar
+      }
+    );
+
+    observer.observe(whiteBlockRef.current);
+
     return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener("load", onLoad);
-      st.kill();
+      console.log('🧹 Limpiando observer');
+      observer.disconnect();
     };
-  }, [setNavMode]);
-  
+  }, [setTheme]);
+
 
   return (
     <main className="automation-page">
-    
+
       <section className="layout-automation">
         <div className="automation-hero">
           <h1 className="display-lg">
@@ -174,14 +179,14 @@ export default function AutomationControls({ setNavMode }) {
             systems, we engineer projects across <br /> various industries.
           </p>
 
-            <p className="title-medium mobile">
+          <p className="title-medium mobile">
             Devoted to maintaining, innovating,
-           and enhancing  <br /> industrial control 
+            and enhancing  <br /> industrial control
             systems,<br /> we engineer projects across <br /> various industries.
           </p>
 
           <ApproachButton label="Book a meeting now" />
-      
+
         </div>
 
         <div className="automation-expertiseRight">
@@ -192,17 +197,17 @@ export default function AutomationControls({ setNavMode }) {
 
 
 
-        <BannerText
-          imgOne={bannerOne}
-          imgTwo={bannerTwo}
-          nextLeftItems={[]}
-          nextRightItems={[]}
-        />
-      <div ref={whiteZoneRef}>
+      <BannerText
+        imgOne={bannerOne}
+        imgTwo={bannerTwo}
+        nextLeftItems={[]}
+        nextRightItems={[]}
+      />
+      <div ref={whiteBlockRef}>
 
-        <section className="whiteTableWrap">
+        <section className="whiteTableWrap flex flex-col gap-9">
           <div className="honeywellElite__inner">
-     
+
             <div className="honeywellElite__left">
               <h2 className="honeywellElite__title headline-medium">
                 <span className="highlight-violet">HONEYWELL</span>
@@ -222,7 +227,7 @@ export default function AutomationControls({ setNavMode }) {
               </div>
             </div>
 
-    
+
             <div className="honeywellElite__right">
               <p className="honeywellElite__lead title-medium">
                 This team ensures that every customer using Honeywell technologies benefits from
@@ -263,15 +268,18 @@ export default function AutomationControls({ setNavMode }) {
             </div>
           </div>
 
-          <Table
-            title="Capabilities with Honeywell technologies"
-            columns={["Service", "Focus", "Description", "Main technologies"]}
-            rows={tableRows}
-          />
+          <div className="flex flex-col gap-6 md:gap-5">
+            <Typography variant='title-large' className='md:text-center text-text-on-white-primary'>Capabilities with Honeywell technologies</Typography>
+            <Table
+              title="Capabilities with Honeywell technologies"
+              columns={["Service", "Focus", "Description", "Main technologies"]}
+              rows={tableRows}
+            />
+          </div>
         </section>
       </div>
 
-  
+
       <section className="automation-expertiseSection automation-expertiseSection--cards">
         <div className="automation-expertiseLeft">
           <h2 className="title-body">RTS engineering Workforce</h2>

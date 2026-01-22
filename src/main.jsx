@@ -4,7 +4,7 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from 'react-redux'
 import { store } from './store'
-
+import { ThemeProvider } from "./contexts/ThemeContext";
 import App from "./App.jsx";
 import "./index.css";
 import "remixicon/fonts/remixicon.css";
@@ -16,9 +16,11 @@ const BASENAME = import.meta.env.BASE_URL.replace(/\/$/, "");
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>
-      <BrowserRouter basename={BASENAME}>
-        <App />
-      </BrowserRouter>
+        <BrowserRouter basename={BASENAME}>
+      <ThemeProvider>
+          <App />
+      </ThemeProvider>
+        </BrowserRouter>
     </Provider>
   </React.StrictMode>
 );

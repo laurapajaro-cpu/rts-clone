@@ -35,9 +35,10 @@
 
 /* --- MODO CLARO (STORY) ------------------------------------------ */
 .navbar.light {
-  background: #e4e6e8;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  color: black;
+  background: rgba(255, 255, 255, 0.07);  /* Cambiado a rgba para transparencia */
+  border: 1px solid rgba(255, 255, 255, 0.25); /* Borde blanco semi-transparente */
+  color: #1a1a1a; /* Texto más oscuro para contraste */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); /* Sombra sutil para profundidad */
 }
 
 /* LOGO */
@@ -225,7 +226,7 @@
 }
 
 .navbar.light .hamburger-btn {
-  background: rgba(0, 0, 0, 0.12);
+  background: rgb(255, 255, 255);
 }
 
 .hamburger-btn svg {

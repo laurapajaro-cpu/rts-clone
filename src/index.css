@@ -9,11 +9,13 @@
   --font-base: "Geist", sans-serif;
   --font-display: "Neue Power Ultra", sans-serif;
 
-  --color-text: #ffffff;
-  --color-bg: #09070c;
+   /* Variables CSS para Tailwind - tema DARK (default según tu config) */
+  --color-bg: #030108;           /* bg-background-primary */
+  --color-text: #FFFFFF;         /* text-text-primary */
   --color-bg-light: #ffffff;
-  --color-text-light: #000000;
-  --text-on-white: #8c8c8c;
+  --color-text-light: #212121;
+  --text-on-white: #212121;     /* text-text-on-white */
+
 
   --margin-desktop: 5vw;
   --margin-laptop: 5vw;
@@ -73,6 +75,35 @@
   --title-space: -0.01em;
 }
 
+/* Tema LIGHT */
+[data-theme="light"] {
+  --color-bg: #ffffff;          /* bg-background-white */
+  --color-text: #030108;        /* text-black - ajusta según necesites */
+  --color-bg-light: #ffffff;
+  --color-text-light: #000000;
+  --text-on-white: #212121;     /* text-text-on-white-primary */
+}
+
+/* También puedes mantener clases CSS si prefieres */
+.light-theme {
+  --color-bg: #ffffff;
+  --color-text: #030108;
+}
+
+.dark-theme {
+  --color-bg: #030108;
+  --color-text: #ffffff;
+}
+
+/* Aplicar variables a elementos base */
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-base);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
 /* =========================================================
    RESPONSIVE VISIBILITY (GLOBAL)
 ========================================================= */
@@ -187,7 +218,7 @@ html, body {
   font-family: var(--font-base);
   background: var(--color-bg);
   color: var(--color-text);
-  overflow-x: hidden;
+  /* overflow-x: hidden; */
 }
 
 code, pre {
@@ -325,4 +356,50 @@ h1, h2, h3, h4, h5, h6 {
   .wrapper {
     padding-inline: var(--margin-mobile);
   }
+}
+
+/* =========================================================
+   SCROLLBAR ESTILIZADO POR TEMA
+========================================================= */
+
+/* Scrollbar vertical - Base */
+::-webkit-scrollbar {
+  width: 8px; /* Scrollbar vertical visible */
+  height: 0;  /* Scrollbar horizontal OCULTO */
+}
+
+/* Track (fondo del scrollbar) */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Thumb (la parte que se mueve) - TEMA DARK (default) */
+::-webkit-scrollbar-thumb {
+  background: rgba(136, 136, 136, 0.5);
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(85, 85, 85, 0.8);
+}
+
+/* TEMA LIGHT */
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: rgba(140, 140, 140, 0.5); /* #8c8c8c con opacidad */
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(108, 117, 125, 0.8); /* color más oscuro para hover */
+}
+
+/* Para Firefox - Scrollbar vertical delgado, horizontal oculto */
+* {
+  scrollbar-width: thin; /* vertical */
+  scrollbar-color: rgba(136, 136, 136, 0.5) transparent; /* thumb y track */
+}
+
+/* Firefox - Tema light */
+[data-theme="light"] * {
+  scrollbar-color: rgba(140, 140, 140, 0.5) transparent;
 }

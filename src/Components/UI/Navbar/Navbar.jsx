@@ -4,13 +4,16 @@ import gsap from "gsap";
 import { Menu, X } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { useTransition } from "../../Transition/Transition";
+import { useTheme } from "../../../contexts/ThemeContext"; // Importa el hook
 import "./Navbar.css";
 import logo from "../../../assets/logo-rts.svg";
 import { Typography, Button } from '../../index'
 
-export default function Navbar({ navMode }) {
+export default function Navbar() {
   const { go } = useTransition();
   const location = useLocation();
+  const { theme } = useTheme(); // Usa el hook
+  // console.log({theme})
 
   // ✅ BASE real (dev/prod) según Vite: "/" o "/RTS/"
   const BASE = import.meta.env.BASE_URL; // ej: "/RTS/"
@@ -350,7 +353,7 @@ export default function Navbar({ navMode }) {
     <>
       <div className="navbar-wrapper">
         <nav
-          className={`navbar ${navMode === "light" ? "light" : "dark"}`}
+          className={`navbar ${theme === "light" ? "light" : "dark"}`}
           ref={navRef}
         >
           <div className="navbar-left">
@@ -446,10 +449,10 @@ export default function Navbar({ navMode }) {
             <Menu
               ref={menuIconRef}
               size={20}
-              color="white"
-              style={{ position: "absolute" }}
+              color={theme === "light" ? "black" : "white"}
+              style={{ position: "absolute", backgroundColor: "transparent" }}
             />
-            <X ref={closeIconRef} size={20} color="white" />
+            <X ref={closeIconRef} size={20} color={theme === "light" ? "black" : "white"} />
           </button>
         </nav>
       </div>
@@ -497,11 +500,11 @@ export default function Navbar({ navMode }) {
           <li className="m-item">
             <a
               className="m-link plain"
-              href={`${BASE}#hub`}
+              href={`${BASE}hub`}
               onClick={(e) => {
                 if (location.pathname !== "/") {
                   e.preventDefault();
-                  goHomeHash("#hub");
+                  goHomeHash("hub");
                   return;
                 }
                 closeMobileMenuHard();
@@ -514,11 +517,11 @@ export default function Navbar({ navMode }) {
           <li className="m-item">
             <a
               className="m-link plain"
-              href={`${BASE}#culture`}
+              href={`${BASE}culture`}
               onClick={(e) => {
                 if (location.pathname !== "/") {
                   e.preventDefault();
-                  goHomeHash("#culture");
+                  goHomeHash("culture");
                   return;
                 }
                 closeMobileMenuHard();

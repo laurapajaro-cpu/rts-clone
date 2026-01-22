@@ -1,97 +1,63 @@
 // src/Pages/HubPage.jsx
 import { useRef, useEffect } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Typography, Button } from "../Components/index";
 import HeroHub from "../Components/Hero/Hub/HeroHub.jsx";
-import HorizontalCarousel from "../Components/Carousel/HorizontalCarousel";
-import Story from "../Components/Story/Story";
 import Banner from "../Components/Banner/Banner";
-import Marquee from "../Components/Marquee/Marquee";
-import Hub from "../Components/Hub/Hub";
-import Location from "../Components/Location/Location";
 import BelowTheLineSection from "../Components/BelowTheLineSection/BelowTheLineSection.jsx";
 
 import bannerImg from "../assets/Banners/HubBanner.png";
 import innovationLabBackgroundImage from "../assets/Backgrounds/innovationLabBackgroung.jpg";
 import academyCardBackgroundImage from "../assets/Backgrounds/academyCardBackground.png";
 import { Brain, DatabaseZap, GraduationCap, Grip, GripHorizontal, GripVertical, Sprout, Telescope } from "lucide-react";
-gsap.registerPlugin(ScrollTrigger);
+import { useTheme } from "../contexts/ThemeContext";
 
-export default function HubPage({ onPhase, setNavMode }) {
+export default function HubPage({ onPhase }) {
   const whiteBlockRef = useRef(null);
+  const { setTheme } = useTheme();
 
   useEffect(() => {
-    const whiteBlock = whiteBlockRef.current;
-    const root = document.documentElement; // :root
+    if (!whiteBlockRef.current) {
+      console.log('⚠️ whiteBlockRef.current aún no existe');
+      return;
+    }
 
-    const st = ScrollTrigger.create({
-      trigger: whiteBlock,
-      start: "top center",
-      end: "bottom center",
-      scrub: false,
+   
 
-      onEnter: () => {
-        gsap.to(root, {
-          "--color-bg": "var(--color-bg-light)",   // #ffffff
-          "--color-text": "var(--color-text-light)", // #000000
-          duration: 0.4,
-          ease: "none",
-        });
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          console.log('🔍 IntersectionObserver entry:', {
+            isIntersecting: entry.isIntersecting,
+            intersectionRatio: entry.intersectionRatio,
+            boundingClientRect: entry.boundingClientRect,
+            rootBounds: entry.rootBounds,
+            time: entry.time
+          });
 
-        gsap.delayedCall(0.25, () => {
-          setNavMode("light");
-          window.dispatchEvent(new Event("navLight"));
-        });
-      },
-
-      onEnterBack: () => {
-        gsap.to(root, {
-          "--color-bg": "var(--color-bg-light)",
-          "--color-text": "var(--color-text-light)",
-          duration: 0.4,
-          ease: "none",
-        });
-
-        gsap.delayedCall(0.25, () => {
-          setNavMode("light");
-          window.dispatchEvent(new Event("navLight"));
+          if (entry.isIntersecting) {
+            //console.log('✅ EN VISTA - Cambiando a light');
+            setTheme("light");
+            window.dispatchEvent(new Event("navLight"));
+          } else {
+           // console.log('❌ FUERA DE VISTA - Cambiando a dark');
+            setTheme("dark");
+            window.dispatchEvent(new Event("navDark"));
+          }
         });
       },
+      {
+        threshold: 0.1, // Baja a 10% para más sensibilidad
+        rootMargin: "0px", // Quita los márgenes negativos para empezar
+      }
+    );
 
-      onLeave: () => {
-        gsap.to(root, {
-          "--color-bg": "#000000",
-          "--color-text": "#ffffff",
-          duration: 0.4,
-          ease: "none",
-        });
-
-        gsap.delayedCall(0.25, () => {
-          setNavMode("dark");
-          window.dispatchEvent(new Event("navDark"));
-        });
-      },
-
-      onLeaveBack: () => {
-        gsap.to(root, {
-          "--color-bg": "#000000",
-          "--color-text": "#ffffff",
-          duration: 0.4,
-          ease: "none",
-        });
-
-        gsap.delayedCall(0.25, () => {
-          setNavMode("dark");
-          window.dispatchEvent(new Event("navDark"));
-        });
-      },
-    });
+    observer.observe(whiteBlockRef.current);
 
     return () => {
-      st.kill();
+      console.log('🧹 Limpiando observer');
+      observer.disconnect();
     };
-  }, [setNavMode]);
+  }, [setTheme]);
 
   return (
     <>
@@ -102,11 +68,11 @@ export default function HubPage({ onPhase, setNavMode }) {
         <div className="md:px-7 py-9 px-3 relative flex flex-col  gap-7" style={{ zIndex: 2 }}>
           <div className="flex flex-col md:flex-row md:justify-between gap-4 " >
             <div className="flex flex-row md:w-2/3">
-              
+
               <Typography
                 variant="headline-medium"
                 className="md:text-headline-large"
-               
+
               >OUR <span className="text-core-violet">LABORATORY</span> OF IDEAS AND EXECUTION</Typography>
             </div>
             <div className="md:w-1/2 flex md:justify-end md:items-end">
@@ -126,7 +92,7 @@ export default function HubPage({ onPhase, setNavMode }) {
               ].map((card, index) => (
                 <div
                   key={`hub-card-laboratory-${index}`}
-                  className="rounded-md shadow-md p-5 flex flex-col justify-between h-hub-card border border-assistant-prompt"
+                  className="rounded-md shadow-md p-5 flex flex-col justify-between h-hub-card border border-assistant-prompt bg-background-primary"
                 >
                   <div className="flex flex-col gap-3">
                     {card.icon}

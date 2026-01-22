@@ -255,6 +255,9 @@ export default {
         'logo-lg': '124px',                  // Uso: h-logo-lg
         'hub-card': '304px',                // Uso: h-hub-card
         'icon-sm': '20px',                   // Uso: h-icon-sm
+        'navbar': '58px',                    // Uso: h-navbar
+        'navbar-top': '30px',                 // Uso: h-navbar-top
+        'navbar-total': '88px',               // Uso: h-navbar-total
       },
       width: {
         'logo-md': '59px',                   // Uso: w-logo-md
