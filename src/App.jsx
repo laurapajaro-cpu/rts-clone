@@ -1,11 +1,10 @@
 // src/App.jsx
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState} from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import Lenis from "@studio-freight/lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-import { useTheme } from "./contexts/ThemeContext";
 import Loader from "./Components/Loader/Loader";
 import Navbar from "./Components/UI/Navbar/Navbar";
 import FloatingNode from "./Components/UI/FloatingNode";
@@ -17,15 +16,29 @@ import EnergyPage from "./Pages/EnergyPage";
 import AutomationControlsPage from "./Pages/AutomationControlsPage";
 import Transition from "./Components/Transition/Transition";
 import Molecule from './Components/molecule/Molecule'
-
+import OilGasIndustryPage from "./Pages/OilGasIndustryPage";
+import PowerIndustryPage from "./Pages/PowerIndustryPage";
+import MiningIndustryPage from "./Pages/MiningIndustryPage";
+import ChemicalsIndustryPage from "./Pages/ChemicalsIndustryPage";
+import PulpPaperIndustryPage from "./Pages/PulpPaperIndustryPage";
+import PharmaceuticalsIndustryPage from "./Pages/PharmaceuticalsIndustryPage";
 import "./App.css";
 import "./index.css";
 import DigitalServicesPage from "./Pages/DigitalServicesPage";
 
-gsap.registerPlugin(ScrollTrigger);
+// Registrar GSAP UNA SOLA VEZ
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger);
+  
+  // Limpiar cualquier instancia previa de GSAP
+  if (window.gsap) {
+    window.gsap.globalTimeline.clear();
+    window.gsap.killTweensOf('*');
+  }
+}
 
 export default function App() {
-  // const { theme } = useTheme();
+    // const { theme } = useTheme();
   // console.log('App theme', theme);
   const location = useLocation();
   const transitionRef = useRef(null);
@@ -63,7 +76,7 @@ export default function App() {
     };
     rafIdRef.current = requestAnimationFrame(raf);
 
-    lenis.on("scroll", ({ scroll }) => setScroll(scroll));
+    //lenis.on("scroll", ({ scroll }) => setScroll(scroll));
 
     const onTick = () => ScrollTrigger.update();
     stTickRef.current = onTick;
@@ -99,6 +112,7 @@ export default function App() {
 
   useEffect(() => {
     if (!loaderDone) return;
+    if (location.pathname !== "/") return;
     gsap.set("#hero", { visibility: "visible" });
     window.__heroEnter = true;
     window.dispatchEvent(new Event("hero:enter"));
@@ -106,6 +120,7 @@ export default function App() {
 
   // Eliminamos el useEffect que manejaba el background
   // porque ahora lo maneja el ThemeContext
+
 
   return (
     <>
@@ -124,7 +139,7 @@ export default function App() {
             className="scroll-container"
             style={{ position: "relative", zIndex: 3, background: "transparent" }}
           >
-            <Routes>
+             <Routes>
               <Route
                 path="/"
                 element={<HomePage onPhase={setPhase} />}
@@ -135,23 +150,49 @@ export default function App() {
               />
               <Route
                 path="/automation-controls"
-                element={<AutomationControlsPage  />}
+                element={<AutomationControlsPage key="automation" />}
               />
               <Route
                 path="/digital"
-                element={<DigitalServicesPage />}
+                element={<DigitalServicesPage key="digital" />}
               />
               <Route
                 path="/energy"
-                element={<EnergyPage />}
+                element={<EnergyPage key="energy" />}
               />
               <Route
                 path="/culture"
-                element={<CulturePage />}
+                element={<CulturePage key="culture" />}
               />
+              <Route path="/industries">
+                <Route
+                  path="oil-and-gas"
+                  element={<OilGasIndustryPage key="oil-gas" />}
+                />
+                <Route
+                  path="chemicals"
+                  element={<ChemicalsIndustryPage key="chemicals" />}
+                />
+                <Route
+                  path="pulp-and-paper"
+                  element={<PulpPaperIndustryPage key="pulp-paper" />}
+                />
+                <Route
+                  path="pharma"
+                  element={<PharmaceuticalsIndustryPage key="pharma" />}
+                />
+                <Route
+                  path="power-generation"
+                  element={<PowerIndustryPage key="power" />}
+                />
+                <Route
+                  path="mining"
+                  element={<MiningIndustryPage key="mining" />}
+                />
+              </Route>
               <Route
                 path="*"
-                element={<HomePage onPhase={setPhase} />}
+                element={<HomePage onPhase={setPhase} key="default" />}
               />
             </Routes>
             <Footer />

@@ -1,15 +1,13 @@
 import { Typography, Button } from "../../index";
-import { useEffect, useRef } from "react";
+
 import heroCultureBackground from "../../../assets/Backgrounds/culture_background.png";
 
 
-export default function HeroCulture() {
-    const rootRef = useRef(null);
+export default function HeroIndustries() {
 
     return (
         <section
             id="hero-energy"
-            ref={rootRef}
             className="relative w-full h-screen min-h-screen"
             style={{
                 backgroundImage: `url(${heroCultureBackground})`,

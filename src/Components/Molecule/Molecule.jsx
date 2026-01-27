@@ -106,7 +106,8 @@ function Molecule() {
     const { pathname } = location
     const isHome = pathname === '/'
     return (
-        <div className={!isHome && 'hidden'} style={{
+        <div style={{
+            display: !isHome && 'none',
             position: 'fixed',
             top: 0,
             left: 0,

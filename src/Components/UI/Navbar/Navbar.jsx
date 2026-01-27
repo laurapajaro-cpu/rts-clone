@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { Menu, X } from "lucide-react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useTransition } from "../../Transition/Transition";
 import { useTheme } from "../../../contexts/ThemeContext"; // Importa el hook
 import "./Navbar.css";
@@ -12,12 +12,12 @@ import { Typography, Button } from '../../index'
 export default function Navbar() {
   const { go } = useTransition();
   const location = useLocation();
+  const navigate = useNavigate();
   const { theme } = useTheme(); // Usa el hook
   // console.log({theme})
 
   // ✅ BASE real (dev/prod) según Vite: "/" o "/RTS/"
   const BASE = import.meta.env.BASE_URL; // ej: "/RTS/"
-  const baseNoSlashEnd = BASE.endsWith("/") ? BASE.slice(0, -1) : BASE;
 
   const navRef = useRef(null);
   const menuRef = useRef(null);
@@ -46,10 +46,12 @@ export default function Navbar() {
   ];
 
   const industriesItems = [
-    { label: "Oil & Gas", href: "industries" },
-    { label: "Power Generation", href: "industries" },
-    { label: "Mining", href: "industries" },
-    { label: "Pharma", href: "industries" },
+    { label: "Oil & Gas", href: "industries/oil-and-gas" },
+    { label: "Power Generation", href: "industries/power-generation" },
+    { label: "Mining", href: "industries/mining" },
+    { label: "Pharma", href: "industries/pharma" },
+    { label: "Chemicals", href: "industries/chemicals" },
+    { label: "Pulp & Paper", href: "industries/pulp-and-paper" },
   ];
 
   useEffect(() => {
@@ -250,61 +252,41 @@ export default function Navbar() {
   };
 
   // ✅ CLAVE: Home -> HARD RELOAD a BASE para ver Loader / reset total
-  const navigateWithTransition = (path) => {
-    closeMobileMenuHard();
+  // const navigate = (path) => {
+  //   closeMobileMenuHard();
 
-    // ✅ volver a "entrada inicial"
-    if (path === "/") {
-      window.location.assign(BASE); // ej: "/RTS/"
-      return;
-    }
+  //   // ✅ volver a "entrada inicial"
+  //   if (path === "/") {
+  //     window.location.assign(BASE); // ej: "/RTS/"
+  //     return;
+  //   }
 
-    // ✅ SPA normal con transición
-    if (go) {
-      go(path);
-      return;
-    }
+  //   // ✅ SPA normal con transición
+  //   if (go) {
+  //     go(path);
+  //     return;
+  //   }
 
-    // ✅ fallback respetando BASE
-    window.location.assign(`${baseNoSlashEnd}${path}`);
-  };
+  //   // ✅ fallback respetando BASE
+  //   window.location.assign(`${baseNoSlashEnd}${path}`);
+  // };
 
   // ✅ para hash sections: si no estás en Home, recarga a BASE + hash (y verás Loader)
-  const goHomeHash = (hash) => {
-    closeMobileMenuHard();
-    window.location.assign(`${BASE}${hash}`);
-  };
+
 
   const renderDropdownItemDesktop = (item) => {
-    const isInternal = !!item.to;
 
-    // ✅ href correcto (sin rutas relativas peligrosas)
-    const href = item.to
-      ? `${baseNoSlashEnd}${item.to}`
-      : item.href?.startsWith("#")
-      ? `${BASE}${item.href}` // "/RTS/#..."
-      : item.href;
 
     return (
       <a
         key={item.label}
-        href={href}
         className="nav-dd-item dd-titlebody"
         onClick={(e) => {
-          if (isInternal) {
-            e.preventDefault();
-            navigateWithTransition(item.to);
-            return;
-          }
-
-          // hash -> si no estás en home, recargá al home+hash
-          if (item.href?.startsWith("#") && location.pathname !== "/") {
-            e.preventDefault();
-            goHomeHash(item.href);
-            return;
-          }
-
+          e.preventDefault();
+          // Usar ruta absoluta que respete el basename
+          navigate(item.href);
           closeDropdowns();
+
         }}
       >
         <i className="ri-corner-down-right-line dd-corner-icon" />
@@ -314,31 +296,16 @@ export default function Navbar() {
   };
 
   const renderDropdownItemMobile = (item) => {
-    const isInternal = !!item.to;
-
-    const href = item.to
-      ? `${baseNoSlashEnd}${item.to}`
-      : item.href?.startsWith("#")
-      ? `${BASE}${item.href}`
-      : item.href;
 
     return (
       <a
         key={item.label}
-        href={href}
         className="m-dd-item dd-titlebody"
         onClick={(e) => {
-          if (isInternal) {
-            e.preventDefault();
-            navigateWithTransition(item.to);
-            return;
-          }
 
-          if (item.href?.startsWith("#") && location.pathname !== "/") {
-            e.preventDefault();
-            goHomeHash(item.href);
-            return;
-          }
+          e.preventDefault();
+          // Usar ruta absoluta que respete el basename
+          navigate(item.href);
 
           closeMobileMenuHard();
         }}
@@ -359,11 +326,14 @@ export default function Navbar() {
           <div className="navbar-left">
             {/* ✅ Logo: Home con HARD reload (Loader visible) */}
             <a
-              href={BASE}
               className="logo-link"
               onClick={(e) => {
                 e.preventDefault();
-                navigateWithTransition("/");
+                console.log("BASE_URL:", import.meta.env.BASE_URL);
+    console.log("Current location:", location.pathname);
+    console.log("Navigating to /");
+                // Navega a la raíz usando navigate en lugar de location.assign
+                navigate("/");
               }}
             >
               <img src={logo} className="logo" alt="RTS" />
@@ -386,9 +356,8 @@ export default function Navbar() {
               </li>
 
               <li
-                className={`nav-item has-dd ${
-                  ddOpen === "industries" ? "selected" : ""
-                }`}
+                className={`nav-item has-dd ${ddOpen === "industries" ? "selected" : ""
+                  }`}
               >
                 <button
                   type="button"
@@ -408,13 +377,8 @@ export default function Navbar() {
               <li className="nav-item">
                 <a
                   className="nav-link plain"
-                  href={`${BASE}hub`}
                   onClick={(e) => {
-                    // if (location.pathname !== "/") {
-                    //   e.preventDefault();
-                    //   goHomeHash("#hub");
-                    //   return;
-                    // }
+                    navigate('/hub');
                     closeDropdowns();
                   }}
                 >
@@ -425,11 +389,10 @@ export default function Navbar() {
               <li className="nav-item">
                 <a
                   className="nav-link plain"
-                  href={`${BASE}culture`}
                   onClick={(e) => {
                     if (location.pathname !== "/") {
                       e.preventDefault();
-                      goHomeHash("culture");
+                      navigate("/culture");
                       return;
                     }
                     closeDropdowns();
@@ -441,9 +404,9 @@ export default function Navbar() {
             </ul>
           </div>
 
-         <Button size="sm" onClick={closeMobileMenuHard}>
-          Book a meeting
-        </Button>
+          <Button size="sm" onClick={closeMobileMenuHard}>
+            Book a meeting
+          </Button>
 
           <button className="hamburger-btn" onClick={toggleMenu}>
             <Menu
@@ -467,9 +430,8 @@ export default function Navbar() {
             >
               <span>What we do</span>
               <i
-                className={`ri-arrow-down-s-line m-dd-icon ${
-                  ddMobileOpen === "what" ? "open" : ""
-                }`}
+                className={`ri-arrow-down-s-line m-dd-icon ${ddMobileOpen === "what" ? "open" : ""
+                  }`}
               />
             </button>
 
@@ -486,9 +448,8 @@ export default function Navbar() {
             >
               <span>Industries</span>
               <i
-                className={`ri-arrow-down-s-line m-dd-icon ${
-                  ddMobileOpen === "industries" ? "open" : ""
-                }`}
+                className={`ri-arrow-down-s-line m-dd-icon ${ddMobileOpen === "industries" ? "open" : ""
+                  }`}
               />
             </button>
 
@@ -502,11 +463,7 @@ export default function Navbar() {
               className="m-link plain"
               href={`${BASE}hub`}
               onClick={(e) => {
-                if (location.pathname !== "/") {
-                  e.preventDefault();
-                  goHomeHash("hub");
-                  return;
-                }
+                navigate(`${BASE}hub`);
                 closeMobileMenuHard();
               }}
             >
@@ -519,7 +476,7 @@ export default function Navbar() {
               className="m-link plain"
               href={`${BASE}culture`}
               onClick={(e) => {
-                navigateWithTransition(`${BASE}culture`);
+                navigate(`${BASE}culture`);
                 closeMobileMenuHard();
               }}
             >
@@ -528,7 +485,7 @@ export default function Navbar() {
           </li>
         </ul>
 
-        <Button  onClick={closeMobileMenuHard}>
+        <Button onClick={closeMobileMenuHard}>
           Book a meeting
         </Button>
       </div>

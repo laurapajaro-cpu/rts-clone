@@ -97,17 +97,14 @@ export default function Banner({
             </span>
           </h2>
 
-          {(bodyDesktop || bodyMobile) && (
-            <p className="banner-body">
-              <span className={`banner-bodyDesktop desktop ${bodyClassName}`}>
-                <Multiline text={bodyDesktop} />
-              </span>
+          {(bodyDesktop) && (
+            <Typography children={bodyDesktop} className="hidden md:block"/>)
+          }
 
-              <span className={`banner-bodyMobile mobile ${bodyMobileClassName}`}>
-                <Multiline text={bodyMobile ?? bodyDesktop} />
-              </span>
-            </p>
-          )}
+          {(bodyMobile || bodyDesktop) && (
+                <Typography children={bodyMobile ?? bodyDesktop} className="block md:hidden" />
+           )}
+
 
           {buttons?.length > 0 && (
             <div className="flex flex-col gap-3 items-center" >

@@ -1,0 +1,328 @@
+// src/Components/IndustriesTemplatePage.jsx
+import { Button, Typography, LazyLogo } from "./index.js";
+import { useRef, useEffect, useState } from "react";
+import { useTheme } from "../contexts/ThemeContext";
+import { CircleCheck, MapPin } from "lucide-react";
+import Banner from "./Banner/Banner.jsx";
+import bannerImg from "../assets/Banners/moon_20.png";
+export function IndustriesTemplatePage({ content }) {
+    const whiteBlockRef = useRef(null);
+    const { setTheme } = useTheme();
+
+    const [heroImage, setHeroImage] = useState(null);
+    const [logos, setLogos] = useState({});
+    const [projectImage, setProjectImage] = useState(null);
+    const [projectClientLogo, setProjectClientLogo] = useState(null);
+
+    // Cargar imagen del hero
+    useEffect(() => {
+        content?.hero.img().then(module => setHeroImage(module.default));
+    }, [content?.hero.img]);
+
+    // Cargar imagen del proyecto
+    useEffect(() => {
+        content?.projectSection?.img().then(module => setProjectImage(module.default));
+    }, [content?.projectSection?.img]);
+
+    // Cargar logo del proyecto
+    useEffect(() => {
+        content?.projectSection?.companyLogo().then(module => setProjectClientLogo(module.default));
+    }, [content?.projectSection?.companyLogo]);
+
+    // Cargar todos los logos de clientes
+    useEffect(() => {
+        const loadLogos = async () => {
+            if (!content?.clientsSection?.clientsLogos) return;
+
+            const logoPromises = Object.entries(content?.clientsSection.clientsLogos).map(
+                async ([key, importFn]) => {
+                    try {
+                        const module = await importFn();
+                        return { key, logo: module.default };
+                    } catch (error) {
+                        console.error(`Error loading logo ${key}:`, error);
+                        return { key, logo: null };
+                    }
+                }
+            );
+
+            const loadedLogos = await Promise.all(logoPromises);
+            const logosMap = {};
+            loadedLogos.forEach(({ key, logo }) => {
+                logosMap[key] = logo;
+            });
+            setLogos(logosMap);
+        };
+
+        loadLogos();
+    }, [content?.clientsSection?.clientsLogos]);
+
+    useEffect(() => {
+        if (!whiteBlockRef.current) {
+            console.log('⚠️ whiteBlockRef.current aún no existe');
+            return;
+        }
+
+
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    // console.log('🔍 IntersectionObserver entry:', {
+                    //   isIntersecting: entry.isIntersecting,
+                    //   intersectionRatio: entry.intersectionRatio,
+                    //   boundingClientRect: entry.boundingClientRect,
+                    //   rootBounds: entry.rootBounds,
+                    //   time: entry.time
+                    // });
+
+                    if (entry.isIntersecting) {
+                        //console.log('✅ EN VISTA - Cambiando a light');
+                        setTheme("light");
+                        window.dispatchEvent(new Event("navLight"));
+                    } else {
+                        // console.log('❌ FUERA DE VISTA - Cambiando a dark');
+                        setTheme("dark");
+                        window.dispatchEvent(new Event("navDark"));
+                    }
+                });
+            },
+            {
+                threshold: 0.1, // Baja a 10% para más sensibilidad
+                rootMargin: "0px", // Quita los márgenes negativos para empezar
+            }
+        );
+
+        observer.observe(whiteBlockRef.current);
+
+        return () => {
+            console.log('🧹 Limpiando observer');
+            observer.disconnect();
+        };
+    }, [setTheme]);
+
+
+    return (
+        <section id="industry">
+            <section id="hero-industries"
+                className="relative w-full h-[450px] "
+                style={{
+                    backgroundImage: `url(${heroImage})`,
+                    backgroundSize: 'cover', // Cambiado a 'contain'
+                    backgroundPosition: 'center center', // Centrado vertical y horizontal
+                    backgroundRepeat: 'no-repeat',
+                    //backgroundColor: '#f5f5f5' // Agregado para rellenar espacio vacío
+                }}
+            >
+                {/* Overlay opcional si el texto no se ve bien */}
+                <div className="absolute inset-0 bg-black/60"></div>
+                <div className="relative z-10 w-full h-full md:px-7 py-9 px-3">
+                    <div className="pt-9 flex flex-col gap-6 md:gap-4">
+                        <Typography variant="headline-large" className="md:text-display-lg ">
+                            {content?.hero.title}
+                        </Typography>
+
+                    </div>
+                </div>
+            </section>
+
+            <section id="industry-clients">
+                <div className="flex flex-col md:flex-row gap-7 md:gap-9 py-9 px-3 md:px-7 bg-background-primary text-text-secondary">
+
+                    <div className="w-full md:w-2/5 flex flex-col md:gap-7 gap-5 ">
+                        <Typography variant="title-body">
+                            {content?.clientsSection?.title}
+                        </Typography>
+                        <Button variant="filled-dark">Book a meeting now</Button>
+                    </div>
+
+                    <div className="w-full md:w-3/5 flex flex-col gap-7 md:gap-6.5 ">
+                        <Typography >
+                            {content?.clientsSection?.info}
+                        </Typography>
+                        <div className="flex flex-col gap-3">
+                            <Typography variant={'subtitle-lg'} className={'text-center'}>
+                                OUR CLIENTS
+                            </Typography>
+
+                            {/* Opción A: Grid con logos cargados dinámicamente */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {Object.entries(content?.clientsSection.clientsLogos || {}).map(([logoKey, importFn]) => (
+                                    <LazyLogo
+                                        key={logoKey}
+                                        logoImport={importFn}
+                                        alt={`${logoKey.replace('Logo', '')} logo`}
+                                        className="h-[85px] md:py-2 hover:shadow-md"
+                                    />
+                                ))}
+                            </div>
+
+
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <section ref={whiteBlockRef}>
+
+                <section id='industry-project' className="relative overflow-hidden ">
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
+                        {/* Primer gradiente principal */}
+                        <div
+                            className="absolute hidden md:block"
+                            style={{
+                                background: 'radial-gradient(145.3% 70.02% at 45.94% 35.79%, rgba(255, 168, 0, 1) 24.04%, rgba(255, 0, 0, 1) 60.58%, rgba(255, 71, 214, 1) 100%)',
+                                transform: 'rotate(-112deg)',
+                                width: '50vw',
+                                height: '50vh',
+                                top: '-20%',
+                                left: '30%',
+                                filter: 'blur(400px)',
+                                // Suavizar transiciones
+                                mixBlendMode: 'screen',
+                            }}
+                        />
+
+                        {/* Segundo gradiente para suavizar bordes */}
+                        {/* <div
+                            className="absolute"
+                            style={{
+                                background: 'radial-gradient(145.3% 70.02% at 45.94% 35.79%, rgba(255, 168, 0, 1) 24.04%, rgba(255, 0, 0, 1) 60.58%, rgba(255, 71, 214, 1) 100%)',
+                                filter: 'blur(400px)',
+                                opacity: '0.4',
+                                width: '80vw',
+                                height: '130vh',
+                                top: '-15%',
+                                left: '10%', // Posicionado más a la derecha
+                                transform: 'rotate(15deg)', // Rotación opcional
+                                mixBlendMode: 'screen', // Mezcla con el primer gradiente
+                            }}
+                        /> */}
+
+                        {/* Primer gradiente principal */}
+                        <div
+                            className="absolute md:hidden"
+                            style={{
+                                background: 'radial-gradient(111.63% 111.63% at 42.64% -5.82%, rgba(255, 168, 0, 1) 33.65%, rgba(255, 0, 0, 1) 44.58%, transparent 100%)',
+                                transform: 'rotate(-112deg)',
+                                width: '150vw',
+                                height: '120vh',
+                                top: '-60%',
+                                right: '-100%',
+                                filter: 'blur(400px)',
+                                // Suavizar transiciones
+                                mixBlendMode: 'screen',
+                            }}
+                        />
+
+
+                    </div>
+                    <div className="relative z-10 flex flex-col gap-6 py-9 px-3 md:px-7">
+                        <Typography variant="headline-medium" className="md:text-display-sm">
+                            Recent project
+                        </Typography>
+
+                        <div className="relative overflow-hidden rounded-md flex justify-center w-full">
+                            {/* Imagen principal */}
+                            <img
+                                src={projectImage}
+                                alt="Project Image"
+                                className="w-full  h-[400px] rounded-md  object-cover"
+                            />
+
+                            {/* Overlay con gradiente */}
+                            <div
+                                className="absolute inset-0 rounded-md"
+                                style={{
+                                    background: `linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.5) 81.81%), rgba(0, 0, 0, 0)`,
+                                    opacity: '0.8', transition: 'opacity 0.3s ease',
+                                }}
+                            />
+
+                            <div className="absolute bottom-0 left-0 right-0 md:right-auto md:bottom-4 md:left-4 p-4 md:p-0">
+                                <div className="flex justify-center md:justify-start ">
+                                    {/* Logo con efecto glass que funciona */}
+                                    <div className="relative w-full">
+                                        {/* Fondo glass que SÍ funciona */}
+                                        <div className="
+                                                         bg-white/20 
+                                                            backdrop-blur-sm
+                                                            rounded-lg
+                                                            p-5
+                                                            shadow-lg
+                                                            flex justify-center
+                                                            
+                                                        ">
+                                            {projectClientLogo ? (
+                                                <img
+                                                    src={projectClientLogo}
+                                                    alt={`${content?.projectSection?.location} logo`}
+                                                    className=" 0 w-auto object-contain max-w-[120px] md:max-w-[150px]"
+                                                />
+                                            ) : (
+                                                <div className="h-8 md:h-10 w-24 md:w-32 bg-gray-400/30 rounded animate-pulse"></div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div className="flex flex-col md:flex-row gap-4 md:gap-6 text-text-on-white-secondary">
+
+                            <div className="flex flex-col gap-3 w-full md:w-2/5">
+                                <Typography variant="title-body" className="md:text-text-on-white-primary flex flex-row gap-2">
+                                    <MapPin /> {content?.projectSection?.location}
+                                </Typography>
+                                <Typography variant="headline-small" >
+                                    {content?.projectSection?.sumary}
+                                </Typography>
+                            </div>
+
+                            <div className="flex flex-col gap-6 w-full md:w-3/5">
+                                <Typography variant="title-body">
+                                    {content?.projectSection?.info}
+                                </Typography>
+
+                                {content?.projectSection?.technicalItems?.length > 0 && (
+                                    <div className="flex flex-col md:flex-row gap-6">
+                                        <Typography variant="body-lg">
+                                            Key Technical Items
+                                        </Typography>
+
+                                        <div className="flex flex-col gap-2">
+                                            {content?.projectSection?.technicalItems?.map((item, index) => (
+                                                <div key={index + 'item-info-industries'} className="flex flex-row gap-2 items-center">
+                                                    <CircleCheck className="text-core-violet h-icon-sm w-icon-sm flex-shrink-0" />
+                                                    <Typography variant="body-md">{item}</Typography>
+                                                </div>
+                                            ))}
+
+                                        </div>
+                                    </div>)}
+                            </div>
+                        </div>
+                    </div>
+
+                </section>
+            </section>
+
+            <Banner
+                    variant="image"
+                    backgroundImage={bannerImg}
+                    overlay={50}
+                    variantMobile="headline-small"
+                    variantDesktop="headline-medium"
+                    titleDesktop={"WOULD YOU LIKE TO KNOW \nMORE ABOUT OUR EXPERIENCE?"}
+                    titleMobile={"WOULD YOU LIKE TO KNOW MORE ABOUT OUR EXPERIENCE?"}
+            
+                    buttons={[
+                      { label: "Book a meeting now", href: "#book", variant: "filled-dark" },
+                    ]}
+                    start="top top"
+                  />
+        </section>
+    )
+}

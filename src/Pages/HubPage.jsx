@@ -10,8 +10,10 @@ import innovationLabBackgroundImage from "../assets/Backgrounds/innovationLabBac
 import academyCardBackgroundImage from "../assets/Backgrounds/academyCardBackground.png";
 import { Brain, DatabaseZap, GraduationCap, Grip, GripHorizontal, GripVertical, Sprout, Telescope } from "lucide-react";
 import { useTheme } from "../contexts/ThemeContext";
+import { useLocation } from "react-router-dom";
 
 export default function HubPage() {
+  const location = useLocation();
   const whiteBlockRef = useRef(null);
   const { setTheme } = useTheme();
 
@@ -58,10 +60,26 @@ export default function HubPage() {
       observer.disconnect();
     };
   }, [setTheme]);
-
+ // RESETEO DE SCROLL AL ENTRAR A LA PÁGINA
+  useEffect(() => {
+    // Resetear scroll al top cuando se monta el componente
+    window.scrollTo(0, 0);
+    
+    // Si estás usando Lenis (como en App.jsx), resetea también
+    if (window.lenis) {
+      window.lenis.scrollTo(0, { immediate: true });
+    }
+    
+    // Forzar reset de ScrollTrigger
+    if (window.gsap && window.gsap.core.ScrollTrigger) {
+      window.gsap.core.ScrollTrigger.refresh();
+    }
+    
+    console.log('HubPage mounted, scroll reset');
+  }, [location.key]);
   return (
     <>
-      <HeroHub  />
+      <HeroHub />
       <div className="hero-outro-spacer" />
 
       <section id='laboratory' className="relative overflow-hidden ">
@@ -109,7 +127,7 @@ export default function HubPage() {
           </div>
         </div>
       </section>
-      <BelowTheLineSection />
+      <BelowTheLineSection key={location.key} />
       <div ref={whiteBlockRef}>
         <section id='academy' className="relative overflow-hidden ">
           <div className="absolute inset-0">

@@ -166,27 +166,27 @@ const Button = React.forwardRef(({
   const Comp = asChild ? Slot : "button";
   
   // Solo aplicamos animación a filled-dark y filled-light
-  const isAnimatedVariant = finalVariant === "filled-dark" || finalVariant === "filled-light";
+  const isAnimatedBackground = finalVariant === "filled-dark" || finalVariant === "filled-light";
   const hoverColor = hoverColors[finalVariant];
   
-  if (!isAnimatedVariant || !hoverColor) {
-    // Para variantes sin animación especial
-    return (
-      <Comp
-        className={cn(
-          buttonVariants({ variant: finalVariant, size, className })
-        )}
-        ref={ref}
-        {...props}
-      >
-        {children}
-      </Comp>
-    );
-  }
+  // if (!isAnimatedVariant || !hoverColor) {
+  //   // Para variantes sin animación especial
+  //   return (
+  //     <Comp
+  //       className={cn(
+  //         buttonVariants({ variant: finalVariant, size, className })
+  //       )}
+  //       ref={ref}
+  //       {...props}
+  //     >
+  //       {children}
+  //     </Comp>
+  //   );
+  // }
   
   return (
     <Comp
-      className={cn(
+      className={cn('w-fit',
         buttonVariants({ variant: finalVariant, size, className })
       )}
       ref={ref}
@@ -195,7 +195,7 @@ const Button = React.forwardRef(({
       {...props}
     >
       {/* Capa del círculo que se expande desde abajo */}
-      {isAnimatedVariant && (
+      {isAnimatedBackground && (
         <motion.div
           className={`absolute inset-0 ${hoverColor} rounded-full`}
           initial={{ scale: 0, borderRadius: "9999px", y: "100%" }}

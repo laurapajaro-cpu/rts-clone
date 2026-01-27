@@ -36,7 +36,8 @@ export default function BelowTheLineSection() {
                 return `top top+=${px}`;
             };
 
-            // Timeline principal - scroll horizontal con scroll vertical
+            // Timeline principal - scroll horizontal con scroll vertical // ¡ESTO ES CLAVE! Verificar que gsap y ScrollTrigger estén cargados
+            
             const tl = gsap.timeline({
                 scrollTrigger: {
                     trigger: section,
@@ -58,13 +59,16 @@ export default function BelowTheLineSection() {
 
             // Manejo de flechas
             const updateArrows = () => {
-                if (!container) return;
-                const progress = tl.progress();
+                 if (!container || !tl) return;
+    const progress = tl.progress();
                 // Lógica para mostrar/ocultar flechas basada en progress
             };
-
+// Y asegurar que timeline existe antes de usarlo
+if (tl && typeof tl.eventCallback === 'function') {
+    tl.eventCallback("onUpdate", updateArrows);
+}
             // Actualizar en cada frame
-            tl.eventCallback("onUpdate", updateArrows);
+            // tl.eventCallback("onUpdate", updateArrows);
 
             return () => {
                 tl.scrollTrigger?.kill();
