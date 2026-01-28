@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Redirecting...</title>
+    <link rel="icon" href="/rts-clone/favicon.ico">
+    <script>
+      // IMPORTANTE: Esta es la versión CORRECTA para tu caso
+      const path = window.location.pathname;
+      const basePath = '/rts-clone';
+      
+      // Si ya estamos en el path correcto, no redirigir
+      if (!path.startsWith(basePath + '/index.html')) {
+        // Guarda la ruta original (sin el base path)
+        const appPath = path.replace(basePath, '') || '/';
+        sessionStorage.setItem('redirect', appPath);
+        
+        // Redirige al index.html
+        window.location.replace(basePath + '/index.html');
+      }
+    </script>
+  </head>
+  <body>
+    <p>Redirecting to the application...</p>
+  </body>
+</html>
