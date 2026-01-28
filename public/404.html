@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Redirecting...</title>
+    <link rel="icon" href="/rts-clone/favicon.ico">
+    <script>
+      // Guarda la ruta actual
+      sessionStorage.redirect = location.pathname;
+      
+      // Redirige al index.html principal
+      // Importante: Incluye el base path /rts-clone/
+      location.replace('/rts-clone/');
+    </script>
+  </head>
+  <body>
+    <p>Redirecting to the application...</p>
+  </body>
+</html>
