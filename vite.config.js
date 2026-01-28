@@ -9,8 +9,10 @@ export default defineConfig({
   css: {
     postcss: './postcss.config.js', // ← Asegura que Vite use PostCSS
   },
-  build: {
+ build: {
+    outDir: 'docs', // ✅ CAMBIA esto de (dist) a 'docs'
     assetsDir: 'assets',
+    emptyOutDir: true, // ✅ Añade esto para limpiar docs/ antes de cada build
     rollupOptions: {
       output: {
         entryFileNames: `assets/[name]-[hash].js`,
