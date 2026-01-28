@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://laurapajaro-cpu.github.io/rts-clone",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
