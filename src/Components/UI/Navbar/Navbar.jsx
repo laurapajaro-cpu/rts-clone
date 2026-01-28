@@ -39,7 +39,7 @@ export default function Navbar() {
   const [ddMobileOpen, setDdMobileOpen] = useState(null);
 
   const whatWeDoItems = [
-    { label: "MOLECULE", to: "molecule" },
+    // { label: "MOLECULE", to: "molecule" },
     { label: "Automation & Controls", to: "automation-controls" },
     { label: "Digitalization", href: "digital" },
     // { label: "OT Cybersecurity", href: "security" },

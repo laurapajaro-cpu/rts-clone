@@ -157,7 +157,7 @@ export default function App() {
                 path="/"
                 element={<HomePage onPhase={setPhase} />}
               />
-              <Route path="/molecule" element={<MoleculePage />} />
+              <Route path="/molecule" key='molecule' element={<MoleculePage />} />
               <Route
                 path="/hub"
                 element={<HubPage onPhase={setPhase}  />}
